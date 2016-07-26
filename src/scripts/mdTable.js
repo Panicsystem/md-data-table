@@ -159,6 +159,8 @@ function mdTable() {
         max = index;
       }
 
+      console.log(min + ' / ' + max);
+
       self.selected = [];
       self.$$hash = new Hash();
       self.getBodyRows().map(mdSelectCtrl).forEach(function (ctrl) {

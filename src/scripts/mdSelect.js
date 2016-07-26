@@ -84,13 +84,6 @@ function mdSelect($compile, $parse) {
         return;
       }
 
-      if(tableCtrl.enableMultiSelect()) {
-        if(event && event.shiftKey) {
-          tableCtrl.selectTo(self.index);
-          return;
-        }
-      }
-
       if(self.id) {
         tableCtrl.selected.splice(tableCtrl.selected.indexOf(tableCtrl.$$hash.get(self.id)), 1);
         tableCtrl.$$hash.purge(self.id);
