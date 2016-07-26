@@ -161,8 +161,8 @@ function mdTable() {
 
       self.selected = [];
       self.$$hash = new Hash();
-      self.getBodyRows().map(mdSelectCtrl).forEach(function (ctrl, i) {
-        if(i >= min && i <= max)
+      self.getBodyRows().map(mdSelectCtrl).forEach(function (ctrl) {
+        if(ctrl.model.mdIndex >= min && ctrl.model.mdIndex <= max)
           ctrl.select();
       });
     };
