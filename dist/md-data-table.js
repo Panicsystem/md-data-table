@@ -938,13 +938,20 @@ function mdSelect($compile, $parse) {
       return tableCtrl.selected.indexOf(self.model) !== -1;
     };
 
-    self.select = function () {
+    self.select = function (event) {
       if(self.disabled) {
         return;
       }
 
+      self.model.mdIndex = self.index;
+
       if(tableCtrl.enableMultiSelect()) {
-        tableCtrl.selected.push(self.model);
+        if(event && event.shiftKey) {
+          tableCtrl.selectTo(self.index);
+        }
+        else {
+          tableCtrl.selected.push(self.model);
+        }
       } else {
         tableCtrl.selected.splice(0, tableCtrl.selected.length, self.model);
       }
@@ -954,10 +961,19 @@ function mdSelect($compile, $parse) {
       }
     };
 
-    self.deselect = function () {
+    self.deselect = function (event) {
       if(self.disabled) {
         return;
       }
+
+      if(tableCtrl.enableMultiSelect()) {
+        if(event && event.shiftKey) {
+          tableCtrl.selectTo(self.index);
+          return;
+        }
+      }
+
+      delete self.model.mdIndex;
 
       if(self.id) {
         tableCtrl.selected.splice(tableCtrl.selected.indexOf(tableCtrl.$$hash.get(self.id)), 1);
@@ -976,7 +992,7 @@ function mdSelect($compile, $parse) {
         event.stopPropagation();
       }
 
-      return self.isSelected() ? self.deselect() : self.select();
+      return self.isSelected() ? self.deselect(event) : self.select(event);
     };
 
     function autoSelect() {
@@ -1089,6 +1105,7 @@ function mdSelect($compile, $parse) {
     restrict: 'A',
     scope: {
       model: '=mdSelect',
+      index: '=mdIndex',
       disabled: '=ngDisabled',
       onSelect: '=?mdOnSelect',
       onDeselect: '=?mdOnDeselect',
@@ -1241,6 +1258,42 @@ function mdTable() {
         resolvePromises();
       }
     };
+
+    function mdSelectCtrl(row) {
+      return angular.element(row).controller('mdSelect');
+    }
+
+    self.selectTo = function(index) {
+      var minMax = getMinMaxSelectedIndex();
+      var min = minMax[0];
+      var max = minMax[1];
+
+      if(index < min) {
+        max = min;
+        min = index;
+      } else {
+        max = index;
+      }
+
+      self.selected = [];
+      self.getBodyRows().map(mdSelectCtrl).forEach(function (ctrl, i) {
+        delete ctrl.model.mdIndex;
+        if(i >= min && i <= max)
+          ctrl.select();
+      });
+    };
+
+    function getMinMaxSelectedIndex() {
+      var lowest = Number.POSITIVE_INFINITY;
+      var highest = Number.NEGATIVE_INFINITY;
+      var tmp;
+      for (var i=self.selected.length-1; i>=0; i--) {
+        tmp = self.selected[i].mdIndex;
+        if (tmp < lowest) lowest = tmp;
+        if (tmp > highest) highest = tmp;
+      }
+      return [lowest, highest];
+    }
     
     self.registerModelChangeListener = function (listener) {
       modelChangeListeners.push(listener);

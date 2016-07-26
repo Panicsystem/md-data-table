@@ -142,6 +142,42 @@ function mdTable() {
         resolvePromises();
       }
     };
+
+    function mdSelectCtrl(row) {
+      return angular.element(row).controller('mdSelect');
+    }
+
+    self.selectTo = function(index) {
+      var minMax = getMinMaxSelectedIndex();
+      var min = minMax[0];
+      var max = minMax[1];
+
+      if(index < min) {
+        max = min;
+        min = index;
+      } else {
+        max = index;
+      }
+
+      self.selected = [];
+      self.getBodyRows().map(mdSelectCtrl).forEach(function (ctrl, i) {
+        delete ctrl.model.mdIndex;
+        if(i >= min && i <= max)
+          ctrl.select();
+      });
+    };
+
+    function getMinMaxSelectedIndex() {
+      var lowest = Number.POSITIVE_INFINITY;
+      var highest = Number.NEGATIVE_INFINITY;
+      var tmp;
+      for (var i=self.selected.length-1; i>=0; i--) {
+        tmp = self.selected[i].mdIndex;
+        if (tmp < lowest) lowest = tmp;
+        if (tmp > highest) highest = tmp;
+      }
+      return [lowest, highest];
+    }
     
     self.registerModelChangeListener = function (listener) {
       modelChangeListeners.push(listener);
