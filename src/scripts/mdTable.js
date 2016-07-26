@@ -167,12 +167,10 @@ function mdTable() {
         max = index;
       }
 
-      console.log(min + ' / ' + max);
-
       self.selected = [];
       self.$$hash = new Hash();
-      self.getBodyRows().map(mdSelectCtrl).forEach(function (ctrl) {
-        if(ctrl.model.mdIndex >= min && ctrl.model.mdIndex <= max)
+      self.getBodyRows().map(mdSelectCtrl).forEach(function (ctrl, idx) {
+        if(idx >= min && idx <= max)
           ctrl.select();
       });
     };
@@ -181,8 +179,16 @@ function mdTable() {
       var lowest = Number.POSITIVE_INFINITY;
       var highest = Number.NEGATIVE_INFINITY;
       var tmp;
-      for (var i=self.selected.length-1; i>=0; i--) {
-        tmp = self.selected[i].mdIndex;
+
+      var selected = [];
+      self.getBodyRows().map(mdSelectCtrl).forEach(function(ctrl, idx) {
+        if(ctrl.isSelected()) {
+          selected.push(idx);
+        }
+      });
+
+      for (var i=selected.length-1; i>=0; i--) {
+        tmp = selected[i];
         if (tmp < lowest) lowest = tmp;
         if (tmp > highest) highest = tmp;
       }

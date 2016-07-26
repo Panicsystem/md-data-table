@@ -11,14 +11,12 @@ function mdSelect($compile, $parse) {
 
   function postLink(scope, element, attrs, ctrls) {
 
-    console.log('postLink');
 
     var self = ctrls.shift();
     var tableCtrl = ctrls.shift();
     var getId = $parse(attrs.mdSelectId);
 
     self.id = getId(self.model);
-    self.model.mdIndex = self.index;
 
     if(tableCtrl.$$rowSelect && self.id) {
       if(tableCtrl.$$hash.has(self.id)) {
@@ -68,7 +66,7 @@ function mdSelect($compile, $parse) {
 
       if(tableCtrl.enableMultiSelect()) {
         if(event && event.shiftKey) {
-          tableCtrl.selectTo(self.index);
+          tableCtrl.selectTo(scope.$parent.$index);
         }
         else {
           tableCtrl.selected.push(self.model);
@@ -218,7 +216,6 @@ function mdSelect($compile, $parse) {
     restrict: 'A',
     scope: {
       model: '=mdSelect',
-      index: '=mdIndex',
       disabled: '=ngDisabled',
       onSelect: '=?mdOnSelect',
       onDeselect: '=?mdOnDeselect',

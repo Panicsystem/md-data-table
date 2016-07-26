@@ -892,14 +892,12 @@ function mdSelect($compile, $parse) {
 
   function postLink(scope, element, attrs, ctrls) {
 
-    console.log('postLink');
 
     var self = ctrls.shift();
     var tableCtrl = ctrls.shift();
     var getId = $parse(attrs.mdSelectId);
 
     self.id = getId(self.model);
-    self.model.mdIndex = self.index;
 
     if(tableCtrl.$$rowSelect && self.id) {
       if(tableCtrl.$$hash.has(self.id)) {
@@ -949,7 +947,7 @@ function mdSelect($compile, $parse) {
 
       if(tableCtrl.enableMultiSelect()) {
         if(event && event.shiftKey) {
-          tableCtrl.selectTo(self.index);
+          tableCtrl.selectTo(scope.$parent.$index);
         }
         else {
           tableCtrl.selected.push(self.model);
@@ -1099,7 +1097,6 @@ function mdSelect($compile, $parse) {
     restrict: 'A',
     scope: {
       model: '=mdSelect',
-      index: '=mdIndex',
       disabled: '=ngDisabled',
       onSelect: '=?mdOnSelect',
       onDeselect: '=?mdOnDeselect',
@@ -1277,12 +1274,10 @@ function mdTable() {
         max = index;
       }
 
-      console.log(min + ' / ' + max);
-
       self.selected = [];
       self.$$hash = new Hash();
-      self.getBodyRows().map(mdSelectCtrl).forEach(function (ctrl) {
-        if(ctrl.model.mdIndex >= min && ctrl.model.mdIndex <= max)
+      self.getBodyRows().map(mdSelectCtrl).forEach(function (ctrl, idx) {
+        if(idx >= min && idx <= max)
           ctrl.select();
       });
     };
@@ -1291,8 +1286,16 @@ function mdTable() {
       var lowest = Number.POSITIVE_INFINITY;
       var highest = Number.NEGATIVE_INFINITY;
       var tmp;
-      for (var i=self.selected.length-1; i>=0; i--) {
-        tmp = self.selected[i].mdIndex;
+
+      var selected = [];
+      self.getBodyRows().map(mdSelectCtrl).forEach(function(ctrl, idx) {
+        if(ctrl.isSelected()) {
+          selected.push(idx);
+        }
+      });
+
+      for (var i=selected.length-1; i>=0; i--) {
+        tmp = selected[i];
         if (tmp < lowest) lowest = tmp;
         if (tmp > highest) highest = tmp;
       }
