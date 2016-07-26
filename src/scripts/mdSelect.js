@@ -10,6 +10,9 @@ function mdSelect($compile, $parse) {
   }
 
   function postLink(scope, element, attrs, ctrls) {
+
+    console.log('postLink');
+
     var self = ctrls.shift();
     var tableCtrl = ctrls.shift();
     var getId = $parse(attrs.mdSelectId);

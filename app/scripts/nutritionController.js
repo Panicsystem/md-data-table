@@ -165,9 +165,9 @@ angular.module('nutritionApp').controller('nutritionController', ['$http', '$mdE
   };
 
   $scope.loadStuff = function () {
-    $scope.promise = $timeout(function () {
-
-    }, 2000);
+    $http.get('desserts.json').then(function (desserts) {
+      $scope.desserts = desserts.data;
+    });
   };
 
   $scope.onReorder = function(order) {
