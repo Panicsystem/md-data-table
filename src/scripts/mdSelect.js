@@ -93,6 +93,7 @@ function mdSelect($compile, $parse) {
 
       if(self.id) {
         tableCtrl.selected.splice(tableCtrl.selected.indexOf(tableCtrl.$$hash.get(self.id)), 1);
+        tableCtrl.$$hash.purge(self.id);
       }
       else {
         tableCtrl.selected.splice(tableCtrl.selected.indexOf(self.model), 1);
