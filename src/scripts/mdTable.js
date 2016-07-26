@@ -161,7 +161,6 @@ function mdTable() {
 
       self.selected = [];
       self.getBodyRows().map(mdSelectCtrl).forEach(function (ctrl, i) {
-        delete ctrl.model.mdIndex;
         if(i >= min && i <= max)
           ctrl.select();
       });

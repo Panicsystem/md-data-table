@@ -15,6 +15,7 @@ function mdSelect($compile, $parse) {
     var getId = $parse(attrs.mdSelectId);
 
     self.id = getId(self.model);
+    self.model.mdIndex = self.index;
 
     if(tableCtrl.$$rowSelect && self.id) {
       if(tableCtrl.$$hash.has(self.id)) {
@@ -62,8 +63,6 @@ function mdSelect($compile, $parse) {
         return;
       }
 
-      self.model.mdIndex = self.index;
-
       if(tableCtrl.enableMultiSelect()) {
         if(event && event.shiftKey) {
           tableCtrl.selectTo(self.index);
@@ -91,8 +90,6 @@ function mdSelect($compile, $parse) {
           return;
         }
       }
-
-      delete self.model.mdIndex;
 
       if(self.id) {
         tableCtrl.selected.splice(tableCtrl.selected.indexOf(tableCtrl.$$hash.get(self.id)), 1);
