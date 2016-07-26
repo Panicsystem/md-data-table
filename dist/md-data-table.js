@@ -1259,6 +1259,14 @@ function mdTable() {
       var min = minMax[0];
       var max = minMax[1];
 
+      console.log(min + ' / ' + max);
+
+      if(min === Number.POSITIVE_INFINITY)
+        min = index;
+
+      if(max === Number.NEGATIVE_INFINITY)
+        max = index;
+
       if(index < min) {
         max = min;
         min = index;
